@@ -224,7 +224,6 @@ print(A)
 eigenvalues = eigvals(A)
 print("\nPure Longitudinal Eigen Values")
 print(eigenvalues)
-# Save data
 
 # Obtaining the damping and frequency-- Cauchey
 lambda1 = math.sqrt(1/(1+(eigenvalues[0].imag/eigenvalues[0].real)**2))
@@ -245,7 +244,6 @@ print(A)
 eigenvalues = eigvals(A)
 print("\nPure Lateral Eigen Values")
 print(eigenvalues)
-# Save data
 lambda1 = math.sqrt(1/(1+(eigenvalues[0].imag/eigenvalues[0].real)**2))
 w1 = -eigenvalues[0].real/lambda1 # Roll mode
 lambda4 = math.sqrt(1/(1+(eigenvalues[3].imag/eigenvalues[3].real)**2))
@@ -255,13 +253,10 @@ lambdad = math.sqrt(1/(1+(eigenvalues[1].imag/eigenvalues[1].real)**2))
 wd = -eigenvalues[1].real/lambdad
 print("\nDutch Roll Mode characteristics:", "Damping ratio:",lambdad, "Frequency:", wd,"rad/s\n")
 ## Root Locus for V vs eigen for both codes
-## Plot a fitting curve through the points -  showing the effficacy of both the linearization methods and his method. 
 
 
 # Turbulence complete Jacobian 
 dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
 print(dxt)
-
-
 
 
