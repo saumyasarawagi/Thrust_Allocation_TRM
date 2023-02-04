@@ -260,5 +260,3 @@ dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW
 print(dxt)
 
 
-
-
