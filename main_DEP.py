@@ -9,6 +9,7 @@
 
 # Import required inbuilt packages
 import numpy as np
+import control as roll
 from numpy.linalg import eigvals
 import math
 import cmath
@@ -26,6 +27,8 @@ import Optimization_Call as op
 import stability as stab
 import state_space as ss
 import Turbulence as turb
+import TimeResponse as tr
+
 
 
 """Create a function to compare when no DEP to define whether optimization required
@@ -258,6 +261,11 @@ print("\nDutch Roll Mode characteristics:", "Damping ratio:",lambdad, "Frequency
 # Turbulence complete Jacobian 
 dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
 print(dxt)
+
+sys = tr.getss(dx, dxt)
+# Define x0 for the state space from k.x where x=[alpha, p, q, r, phi, theta, delta_a, delta_e, delta_r, delta_i]
+x0 = np.array([fixtest[0], k.x[5], k.x[0], k.x[2], fixtest[1], k.x[3], k.x[1], k.x[5]])
+R = tr.plotresponse(x0, sys)
 
 
 
