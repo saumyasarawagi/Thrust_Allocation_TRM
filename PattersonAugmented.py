@@ -264,7 +264,7 @@ class PropWing:
 
     def ReOrganiseLift(self, lift):
         # reorganise lift distribution for plotting or other uses
-        dtype=[('Yposi', np.float), ('Area', np.float), ('LocalChord', np.float), ('Cl', np.float), ('Cdw', np.float), ('Cd0', np.float), ('Vep_total', np.float), ('V_r_effects', np.float) ]
+        dtype=[('Yposi', float), ('Area', float), ('LocalChord', float), ('Cl', float), ('Cdw', float), ('Cd0', float), ('Vep_total', float), ('V_r_effects', float) ]
         structArray = np.zeros((len(lift[:,1]),),dtype=dtype)
         structArray['Yposi'] = lift[:, 0]
         structArray['Area'] = lift[:, 1]
@@ -284,7 +284,7 @@ class PropWing:
         Recompute the induced velocity and sum the friction drag and prop wash.
         
         The function works with organised coefficients in a dictionnary :
-            dtype=[('Yposi',np.float),('Area',np.float),('LocalChord',np.float),('Cl',np.float),('Cdw',np.float),('Cd0',np.float)]
+            dtype=[('Yposi',float),('Area',float),('LocalChord',float),('Cl',float),('Cdw',float),('Cd0',float)]
             The data typically comes from a VLM, it should be ordered from -b/2 to b/2
         '''
         
