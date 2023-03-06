@@ -68,7 +68,7 @@ def sendturb():
     plt.legend()
     plt.show()
     
-    U = np.zeros((6,100))
+    U = np.zeros((6,20))
     U[0, 5:10] = gust_u
     U[1, 5:10] = gust_v
     U[2, 5:10] = gust_w

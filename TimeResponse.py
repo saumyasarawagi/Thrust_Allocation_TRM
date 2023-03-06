@@ -31,7 +31,7 @@ def getss(dx, dxt):
 
 def plotresponse(x0, sys):
     U,t = ti.sendturb()
-    t = np.arange(0, 20, 0.2)
+    t = np.arange(0, 20, 1)
     R = control.forced_response(sys, t, U, x0)
     
     # plot the response
