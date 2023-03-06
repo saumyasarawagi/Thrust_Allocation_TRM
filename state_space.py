@@ -150,3 +150,31 @@ def completess(dx):
     A[7,7] = dx[6,7];
     
     return A
+
+def Bforfixedinput(dx):
+    
+    # Add gamma here as well
+    A = np.zeros((8,12))
+    c = 0;
+    A[0,c] = dx[0,2];
+    A[1,c] = dx[7,2];
+    A[2,c] = dx[2,2];
+    A[3,c] = dx[4,2];
+    A[4,c] = dx[1,2];
+    A[5,c] = dx[5,2];
+    A[6,c] = dx[3,2];
+    A[7,c] = dx[6,2];
+   
+    for i in range(9,20):
+        c = c+1;
+        A[0,c] = dx[0,i];
+        A[1,c] = dx[7,i];
+        A[2,c] = dx[2,i];
+        A[3,c] = dx[4,i];
+        A[4,c] = dx[1,i];
+        A[5,c] = dx[5,i];
+        A[6,c] = dx[3,i];
+        A[7,c] = dx[6,i];
+       
+    
+    return (A)

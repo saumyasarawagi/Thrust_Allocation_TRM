@@ -57,7 +57,7 @@ inop_eng = 0 # Number of engines that are inoperative
 g = DECOLgeometry.data(inop_eng, r=0.113 / 2, rf=0.1865 / 2, zw=0.045)
 
 # Constant Flight Parameters
-V = 23.5  # Velocity (m/s)
+V = 15  # Velocity (m/s)
 M = V/a
 beta = 0 / 180 * math.pi
 gamma = 0 / 180 * math.pi  # math.atan(0/87.4)#/180*math.pi # 3% slope gradient # 6.88m/s vertical
@@ -203,8 +203,8 @@ print(k.fun)
     
 # check if constraints are validated
 constraints_calc=e.Constraints_DEP(k.x,*diccons)
-#print("\nConstraints")
-#print(constraints_calc)
+print("\nConstraints")
+print(constraints_calc)
 
 # Checking stability of the aircraft for the trim condition obtained
 dx = stab.Jacobian(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
@@ -265,7 +265,8 @@ print(dxt)
 sys = tr.getss(dx, dxt)
 # Define x0 for the state space from k.x where x=[alpha, p, q, r, phi, theta, delta_a, delta_e, delta_r, delta_i]
 x0 = np.array([fixtest[0], k.x[5], k.x[0], k.x[2], fixtest[1], k.x[3], k.x[1], k.x[5]])
-R = tr.plotresponse(x0, sys)
+u = np.hstack((fixtest[2], k.x[6:]))
+R = tr.plotresponse(x0, sys, u)
 
 
 

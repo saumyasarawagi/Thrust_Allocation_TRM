@@ -18,23 +18,34 @@ import matplotlib.colors as colors
 
 def getss(dx, dxt):
     A = ss.completess(dx)
+    B_part1 = ss.Bforfixedinput(dx) #11 - a,e,r,x
     #A = np.vstack([A1, A2])
     #print(np.size(A))
-    B = dxt
+    B_part2 = dxt
+    B = np.hstack((B_part1, B_part2))
     #print(np.size(B))
     # Assuming all the state values are available
     C = np.identity(8)
-    D = np.zeros((8,6))
+    D = np.zeros((8,18))
     sys = control.ss(A, B, C, D)
     # Here, the turbulence is treated as the input
     return sys
 
-def plotresponse(x0, sys):
-    U,t = ti.sendturb()
+def plotresponse(x0, sys, U_control):
+    
+    U_turb,t_simulation = ti.sendturb()
     t = np.arange(0, 20, 1)
+    U_c = U_control
+    
+    # Find more efficient way to do this
+    for i in range(19):
+       U_c = np.vstack((U_c,U_control))
+    
+    U = np.vstack((np.transpose(U_c), U_turb))
     R = control.forced_response(sys, t, U, x0)
     
     # plot the response
+    # ADD legend
     plt.grid()
     plt.plot(R.t,R.y[0])
     plt.plot(R.t,R.y[1])
