@@ -23,6 +23,8 @@ def getss(dx, dxt):
     #print(np.size(A))
     B_part2 = dxt
     B = np.hstack((B_part1, B_part2))
+    #print("Printing A", A)
+    #print("Printing B", B)
     #print(np.size(B))
     # Assuming all the state values are available
     C = np.identity(8)
@@ -42,19 +44,21 @@ def plotresponse(x0, sys, U_control):
        U_c = np.vstack((U_c,U_control))
     
     U = np.vstack((np.transpose(U_c), U_turb))
+    print(U)
     R = control.forced_response(sys, t, U, x0)
     
     # plot the response
     # ADD legend
     plt.grid()
-    plt.plot(R.t,R.y[0])
-    plt.plot(R.t,R.y[1])
-    plt.plot(R.t,R.y[2])
-    plt.plot(R.t,R.y[3])
-    plt.plot(R.t,R.y[4])
-    plt.plot(R.t,R.y[5])
-    plt.plot(R.t,R.y[6])
-    plt.plot(R.t,R.y[7])
+    plt.plot(R.t,R.y[0], label='Velocity')
+    plt.plot(R.t,R.y[1], label ='theta')
+    plt.plot(R.t,R.y[2], label = 'alpha')
+    plt.plot(R.t,R.y[3], label ='q')
+    plt.plot(R.t,R.y[4], label = 'beta')
+    plt.plot(R.t,R.y[5], label ='r')
+    plt.plot(R.t,R.y[6], label='p')
+    plt.plot(R.t,R.y[7], label ='phi')
+    plt.legend()
     plt.show()
     # Add legends to all the curves and see time response when the gust stops
     

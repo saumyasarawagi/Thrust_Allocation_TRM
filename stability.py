@@ -27,8 +27,8 @@ def Jacobian(x, fix, CoefMatrix, atmo, g, PropWing):
     step_vector = 0.001; # Let
     Velocity=(10,15,20,25,30,35)
     V = fix[0] # ---> To account for change in co-efficient matrix due to velocity change
-    V1 = V + 0.001
-    V2 = V - 0.001
+    V1 = V + 0.00001
+    V2 = V - 0.00001
     
     length_x = len(x);
     dx = np.zeros((8,length_x+3));

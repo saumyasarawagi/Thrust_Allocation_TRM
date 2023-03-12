@@ -69,12 +69,12 @@ def sendturb():
     plt.show()
     
     U = np.zeros((6,20))
-    """"U[0, 5:10] = gust_u
+    U[0, 5:10] = gust_u
     U[1, 5:10] = gust_v
     U[2, 5:10] = gust_w
     U[3, 5:10] = gust_p
     U[4, 5:10] = gust_q
-    U[5, 5:10] = gust_r"""
+    U[5, 5:10] = gust_r
     
     return U,t
 

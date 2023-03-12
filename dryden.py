@@ -49,7 +49,7 @@ class Filter:
 
 
 class DrydenGustModel:
-    def __init__(self, dt, b, h=100, V_a=23.5, intensity=None):
+    def __init__(self, dt, b, h1, V, intensity=None):
         """
         Continuous Dryden Turbulence Model (MIL-F-8785C).
         :dt: (float) band-limited white noise input sampling time.
@@ -59,8 +59,8 @@ class DrydenGustModel:
         :intensity: (str) Intensity of turbulence, one of ["light", "moderate", "severe"]
         """
         # For fixed (nominal) altitude and airspeed
-        h = h  # altitude [m]
-        V_a = V_a  # airspeed [m/s]
+        h = h1  # altitude [m]
+        V_a = V  # airspeed [m/s]
 
         # Conversion factors
         # 1 meter = 3.281 feet

@@ -57,9 +57,9 @@ inop_eng = 0 # Number of engines that are inoperative
 g = DECOLgeometry.data(inop_eng, r=0.113 / 2, rf=0.1865 / 2, zw=0.045)
 
 # Constant Flight Parameters
-V = 15  # Velocity (m/s)
+V = 23  # Velocity (m/s)
 M = V/a
-beta = 0 / 180 * math.pi
+beta = 0.1 / 180 * math.pi
 gamma = 0 / 180 * math.pi  # math.atan(0/87.4)#/180*math.pi # 3% slope gradient # 6.88m/s vertical
 R = 0  # in meters the turn radius
 g.P_var = 8 * 14.4 * 4  # I*V*N_eng/2    
@@ -208,6 +208,8 @@ print(constraints_calc)
 
 # Checking stability of the aircraft for the trim condition obtained
 dx = stab.Jacobian(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
+
+#dx[7,:] = dx[7, :]-dx[2, :] #Thetadot - alphadot 
 print("\nComplete Jacobian")
 print(dx)
 ''' It is important to emphasize that the quantities defined above by the Jacobian are not 
@@ -221,7 +223,7 @@ just the partial derivatives but the derivatives devided by the mass and inertia
 # Now, for longitudinal flight we know that the first, third and the fifth and eigth equations correspond to the longitudinal variables
 # Before that, it is imporant to emphasize that now the moments due to thrust vectors are not zero - maybe less for pitching but still there
 
-A = ss.longitudinalss(dx)
+"""A = ss.longitudinalss(dx)
 print("\nLongitudinal State Space Matrix A") # We can verify that the matrix is correct because the row corresponding to theta are all zeros, except for the one corresponding to q column
 print(A)
 eigenvalues = eigvals(A)
@@ -256,17 +258,52 @@ lambdad = math.sqrt(1/(1+(eigenvalues[1].imag/eigenvalues[1].real)**2))
 wd = -eigenvalues[1].real/lambdad
 print("\nDutch Roll Mode characteristics:", "Damping ratio:",lambdad, "Frequency:", wd,"rad/s\n")
 ## Root Locus for V vs eigen for both codes\
-#np.save("eiglong11", eigenvalues)    
+#np.save("eiglong11", eigenvalues)"""
+
+
+jac = np.insert(dx, 2, dx[7, :]-dx[2, :], axis=0)   
+#New jac lign : [V, beta, gamma, alpha, p, q, r, phi, theta]
+LignLat = (1, 4, 6, 7)  #
+ColLat = (1, 4, 6, 7)  # beta, p, r, phi
+LignLongi = (0, 2, 3, 5)  # (V, gamma, alpha, q)
+ColLongi = (0, 2, 3, 5)  # (V, gamma, alpha, q)
+TransiLat = jac[LignLat, :]
+LatJac = TransiLat[:, ColLat]
+TransiLongi = jac[LignLongi, :]
+LongiJac = TransiLongi[:, ColLongi]
+
+
+Lateigvals = scipy.linalg.eigvals(LatJac)
+Longieigvals = scipy.linalg.eigvals(LongiJac)
+
+
+print("Longitudinal mat :")
+print(LongiJac)
+print("Longitudinal Eigen value :")
+print(Longieigvals)
+print("Lat mat :")
+print(LatJac)
+print("Lateral Eigen value :")
+print(Lateigvals)    
 
 # Turbulence complete Jacobian 
 dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
-print(dxt)
+#print(dxt)
 
 sys = tr.getss(dx, dxt)
+
 # Define x0 for the state space from k.x where x=[alpha, p, q, r, phi, theta, delta_a, delta_e, delta_r, delta_i]
-x0 = np.array([fixtest[0], k.x[5], k.x[0], k.x[2], fixtest[1], k.x[3], k.x[1], k.x[5]])
+x0 = np.array([fixtest[0], k.x[5], k.x[0], k.x[2], fixtest[1], k.x[3], k.x[1], k.x[4]])
 u = np.hstack((fixtest[2], k.x[6:]))
+#U0 = np.hstack((u, [0, 0, 0, 0, 0,0]))
+x0 = np.zeros((8))
+u = np.zeros((12))
 R = tr.plotresponse(x0, sys, u)
+
+# To see if derivative is obtained as zero print(np.matmul(sys.A,np.transpose(x0))+np.matmul(sys.B,np.transpose(U0)))
+
+# For the report compare wth the power requirement for the older model
+# System recovery in case of turbulence
 
 
 
