@@ -57,7 +57,7 @@ inop_eng = 0 # Number of engines that are inoperative
 g = DECOLgeometry.data(inop_eng, r=0.113 / 2, rf=0.1865 / 2, zw=0.045)
 
 # Constant Flight Parameters
-V = 23  # Velocity (m/s)
+V = 25  # Velocity (m/s)
 M = V/a
 beta = 0.1 / 180 * math.pi
 gamma = 0 / 180 * math.pi  # math.atan(0/87.4)#/180*math.pi # 3% slope gradient # 6.88m/s vertical
@@ -208,10 +208,11 @@ print(constraints_calc)
 
 # Checking stability of the aircraft for the trim condition obtained
 dx = stab.Jacobian(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
+jac = np.insert(dx, 2, dx[7, :]-dx[2, :], axis=0) 
 
 #dx[7,:] = dx[7, :]-dx[2, :] #Thetadot - alphadot 
 print("\nComplete Jacobian")
-print(dx)
+print(jac)
 ''' It is important to emphasize that the quantities defined above by the Jacobian are not 
 just the partial derivatives but the derivatives devided by the mass and inertia values respectively'''
 # Now we have the Jacobian of the aircraft at a trim condition --  inorder to assess the stability 
@@ -223,7 +224,7 @@ just the partial derivatives but the derivatives devided by the mass and inertia
 # Now, for longitudinal flight we know that the first, third and the fifth and eigth equations correspond to the longitudinal variables
 # Before that, it is imporant to emphasize that now the moments due to thrust vectors are not zero - maybe less for pitching but still there
 
-"""A = ss.longitudinalss(dx)
+A = ss.longitudinalss(jac)
 print("\nLongitudinal State Space Matrix A") # We can verify that the matrix is correct because the row corresponding to theta are all zeros, except for the one corresponding to q column
 print(A)
 eigenvalues = eigvals(A)
@@ -243,7 +244,7 @@ print("\nShort Period Mode characteristics:", "Damping ratio:",lambda1, "Frequen
 
 
 # Similarly for lateral dynamics
-A = ss.lateralss(dx)
+A = ss.lateralss(jac)
 print("\nLateral State Space Matrix A")
 print(A)
 eigenvalues = eigvals(A)
@@ -258,12 +259,10 @@ lambdad = math.sqrt(1/(1+(eigenvalues[1].imag/eigenvalues[1].real)**2))
 wd = -eigenvalues[1].real/lambdad
 print("\nDutch Roll Mode characteristics:", "Damping ratio:",lambdad, "Frequency:", wd,"rad/s\n")
 ## Root Locus for V vs eigen for both codes\
-#np.save("eiglong11", eigenvalues)"""
-
-
-jac = np.insert(dx, 2, dx[7, :]-dx[2, :], axis=0)   
+#np.save("eiglong11", eigenvalues)
+ 
 #New jac lign : [V, beta, gamma, alpha, p, q, r, phi, theta]
-LignLat = (1, 4, 6, 7)  #
+"""LignLat = (1, 4, 6, 7)  #
 ColLat = (1, 4, 6, 7)  # beta, p, r, phi
 LignLongi = (0, 2, 3, 5)  # (V, gamma, alpha, q)
 ColLongi = (0, 2, 3, 5)  # (V, gamma, alpha, q)
@@ -284,7 +283,7 @@ print(Longieigvals)
 print("Lat mat :")
 print(LatJac)
 print("Lateral Eigen value :")
-print(Lateigvals)    
+print(Lateigvals)"""
 
 # Turbulence complete Jacobian 
 dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
