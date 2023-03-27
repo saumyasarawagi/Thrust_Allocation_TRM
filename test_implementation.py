@@ -12,8 +12,8 @@ import matplotlib.colors as colors
 from dryden import DrydenGustModel, Filter
 
 # Define the sample time and simulation time
-dt = 1
-simulation_time = 30
+dt = 0.1
+simulation_time = 10
 t = np.arange(0, simulation_time, dt)
 
 # Define the aircraft parameters
@@ -31,7 +31,7 @@ dryden_model = DrydenGustModel(dt, b, h, V_a, intensity)
 dryden_model.seed(7)
 dryden_model._generate_noise(10)
 dryden_model.reset(dryden_model.noise)
-dryden_model.simulate(simulation_time)
+dryden_model.simulate(simulation_time*10)
 
 #print(dryden_model.vel_lin)
 #print("----------------------------------------------------")

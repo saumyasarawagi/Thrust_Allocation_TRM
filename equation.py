@@ -169,5 +169,73 @@ def fobjectivePower(x, fix, rho, g):
     Power = np.sum(g.Propeller.PropPower(x[-g.N_eng:], V_vect))
     return Power
 
+def Jac_DEP(x, fix, CoefMatrix, atmo, g, PropWing, h):
+    # function to compute the jacobian at a steady state
+    # the function is hard coded inside
+    # inputs :
+    #       -x : steady state vector
+    #       -fixtuple : tuple of (fixed param, function param)
+    #       -h : step to compute derivative
+    
+    nfx=9 # number of equations for flight analysis (V, beta, alpha, p, q, r, phi, theta, gamma)
+    # As gamma is a parameter in the flight equation (gamma_dot not computed),
+    # The vector of accelerations is : [V,beta,alpha,p,q,r,phi,theta] = nfx-1
+    
+    step_vec=x*h
+    
+    for i in range(len(step_vec)):
+        # check for zeros
+        if step_vec[i]<1e-4:
+            step_vec[i]=0.001
+     
+#    fx=Constraints_DEP(x, *fixtuple)
+    
+    dx=np.zeros((nfx-1,len(x)+3))
+    fixtuple=(fix, CoefMatrix, atmo, g, PropWing)
+    
+    # Compute derivative using centered difference
+    # Accelerations due to a small change in velocity
+    fix_plus=fix+np.append([fix[0]*h/2.0],np.zeros((len(fix)-1)))
+    fix_minus=fix-np.append([fix[0]*h/2.0],np.zeros((len(fix)-1)))
+    
+    tuple_plus=(fix_plus, CoefMatrix, atmo, g, PropWing)
+    tuple_minus=(fix_minus, CoefMatrix, atmo, g, PropWing)
+    
+    diff=(Constraints_DEP(x,*tuple_plus)-Constraints_DEP(x,*tuple_minus))/(fix[0]*h)
+    dx[:,0]=diff[0:nfx-1]
+    
+    # Accelerations due to a small change in side-slip
+    beta_step=np.zeros((len(fix)))
+    beta_step[1]=h/2
+    fix_plus=fix+beta_step
+    fix_minus=fix-beta_step
+    
+    tuple_plus=(fix_plus, CoefMatrix, atmo, g, PropWing)
+    tuple_minus=(fix_minus, CoefMatrix, atmo, g, PropWing)
+    
+    diff=(Constraints_DEP(x,*tuple_plus)-Constraints_DEP(x,*tuple_minus))/(beta_step[1]*2)
+    dx[:,1]=diff[0:nfx-1]
+    
+    # Accelerations due to a small change in gamma
+    gamma_step=np.zeros((len(fix)))
+    gamma_step[2]=h/2
+    fix_plus=fix+gamma_step
+    fix_minus=fix-gamma_step
+    
+    tuple_plus=(fix_plus, CoefMatrix, atmo, g, PropWing)
+    tuple_minus=(fix_minus, CoefMatrix, atmo, g, PropWing)
+    
+    diff=(Constraints_DEP(x,*tuple_plus)-Constraints_DEP(x,*tuple_minus))/(gamma_step[2]*2)
+    dx[:,2]=diff[0:nfx-1]
+    
+    # Now all acceleration due to a small of each variables in x
+    for j in range(len(x)):
+        activex=np.zeros((len(x)))
+        activex[j]=1
+        dfx=(Constraints_DEP(x+activex*step_vec/2,*fixtuple)-Constraints_DEP(x-activex*step_vec/2,*fixtuple))/np.dot(activex,step_vec)
+        dx[:,j+3]=dfx[0:nfx-1]
+
+    # Optionally decouple matrix
+    return dx
 
     

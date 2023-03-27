@@ -57,9 +57,9 @@ inop_eng = 0 # Number of engines that are inoperative
 g = DECOLgeometry.data(inop_eng, r=0.113 / 2, rf=0.1865 / 2, zw=0.045)
 
 # Constant Flight Parameters
-V = 25  # Velocity (m/s)
+V = 30  # Velocity (m/s)
 M = V/a
-beta = 0.1 / 180 * math.pi
+beta = 10 / 180 * math.pi
 gamma = 0 / 180 * math.pi  # math.atan(0/87.4)#/180*math.pi # 3% slope gradient # 6.88m/s vertical
 R = 0  # in meters the turn radius
 g.P_var = 8 * 14.4 * 4  # I*V*N_eng/2    
@@ -208,6 +208,7 @@ print(constraints_calc)
 
 # Checking stability of the aircraft for the trim condition obtained
 dx = stab.Jacobian(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
+#dx = e.Jac_DEP(k.x, *diccons, 0.01)
 jac = np.insert(dx, 2, dx[7, :]-dx[2, :], axis=0) 
 
 #dx[7,:] = dx[7, :]-dx[2, :] #Thetadot - alphadot 
@@ -289,14 +290,14 @@ print(Lateigvals)"""
 dxt = turb.turbulence_ss(k.x, np.copy(fixtest), np.copy(CoefMatrix), atmo, g, PW);
 #print(dxt)
 
-sys = tr.getss(dx, dxt)
+sys = tr.getss(jac, dxt)
 
 # Define x0 for the state space from k.x where x=[alpha, p, q, r, phi, theta, delta_a, delta_e, delta_r, delta_i]
-x0 = np.array([fixtest[0], k.x[5], k.x[0], k.x[2], fixtest[1], k.x[3], k.x[1], k.x[4]])
-u = np.hstack((fixtest[2], k.x[6:]))
+x0 = np.array([fixtest[0], fixtest[2], k.x[0], k.x[2], fixtest[1], k.x[1], k.x[3], k.x[4]])
+u = np.hstack((k.x[5], k.x[6:]))
 #U0 = np.hstack((u, [0, 0, 0, 0, 0,0]))
-x0 = np.zeros((8))
-u = np.zeros((12))
+#x0 = np.zeros((8))
+#u = np.zeros((12))
 R = tr.plotresponse(x0, sys, u)
 
 # To see if derivative is obtained as zero print(np.matmul(sys.A,np.transpose(x0))+np.matmul(sys.B,np.transpose(U0)))

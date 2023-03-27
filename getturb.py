@@ -15,7 +15,7 @@ from dryden import DrydenGustModel, Filter
 def sendturb():
     # Define the sample time and simulation time
     # Assuming different time scales for the time being
-    dt = 1
+    dt = 0.1
     simulation_time = 5
     t = np.arange(0, simulation_time, dt)
 
@@ -34,7 +34,7 @@ def sendturb():
     dryden_model.seed(7)
     dryden_model._generate_noise(10)
     dryden_model.reset(dryden_model.noise)
-    dryden_model.simulate(simulation_time)
+    dryden_model.simulate(int(simulation_time*dt*100))
 
     #print(dryden_model.vel_lin)
     #print("----------------------------------------------------")
@@ -68,13 +68,13 @@ def sendturb():
     plt.legend()
     plt.show()
     
-    U = np.zeros((6,20))
-    U[0, 5:10] = gust_u
-    U[1, 5:10] = gust_v
-    U[2, 5:10] = gust_w
-    U[3, 5:10] = gust_p
-    U[4, 5:10] = gust_q
-    U[5, 5:10] = gust_r
+    U = np.zeros((6,100))
+    U[0, 10:60] = gust_u
+    U[1, 10:60] = gust_v
+    U[2, 10:60] = gust_w
+    U[3, 10:60] = gust_p
+    U[4, 10:60] = gust_q
+    U[5, 10:60] = gust_r
     
     return U,t
 

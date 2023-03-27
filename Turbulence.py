@@ -52,26 +52,26 @@ def turbulence_ss(x, fix, CoefMatrix, atmo, g, PropWing):
     fix_high[0] = -(ug + step_vector); # --ug
     fix_low = np.zeros(np.size(fix));
     fix_low[0] = -(ug-step_vector);
-    k = (e.Dynamics_DEP(x, fix+fix_high, *tuple_V1) - e.Dynamics_DEP(x, fix+fix_low, *tuple_V2) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,0] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x, fix+fix_high, *tuple_V1) - e.Dynamics_DEP(x, fix+fix_low, *tuple_V2) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,0] = k2[:8,0]
     
     fix_high = np.zeros(np.size(fix));
     fix_high[1] = -(vg + step_vector)/V; # --vg
     fix_low = np.zeros(np.size(fix));
     fix_low[1] = -(vg-step_vector)/V;
-    k = (e.Dynamics_DEP(x, fix+fix_high, *tuple_1) - e.Dynamics_DEP(x, fix+fix_low, *tuple_1) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,1] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x, fix+fix_high, *tuple_1) - e.Dynamics_DEP(x, fix+fix_low, *tuple_1) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,1] = k2[:8,0]
     
 
     x_high = np.zeros(np.size(x));
     x_high[1] = -(wg + step_vector)/V; # --wg
     x_low = np.zeros(np.size(x));
     x_low[1] = -(wg-step_vector)/V;
-    k = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,2] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,2] = k2[:8,0]
     
     # Now add p, q, r of the turbulence as disturbance along the p,q and r; 3,4,5
     
@@ -79,26 +79,28 @@ def turbulence_ss(x, fix, CoefMatrix, atmo, g, PropWing):
     x_high[3] = -(pg + step_vector)/V; # --pg
     x_low = np.zeros(np.size(x));
     x_low[3] = -(pg-step_vector)/V;
-    k = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,3] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,3] = k2[:8,0]
     
     x_high = np.zeros(np.size(x));
     x_high[4] = -(qg + step_vector)/V; # --qg
     x_low = np.zeros(np.size(x));
     x_low[4] = -(qg-step_vector)/V;
-    k = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,4] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,4] = k2[:8,0]
     
     x_high = np.zeros(np.size(x));
     x_high[5] = -(rg + step_vector)/V; # --rg
     x_low = np.zeros(np.size(x));
     x_low[5] = -(rg-step_vector)/V;
-    k = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
-    k = np.reshape(k,(10,1))
-    dx[:,5] = k[:8,0]
+    k2 = (e.Dynamics_DEP(x+x_high, fix, *tuple_1) - e.Dynamics_DEP(x+x_low, fix, *tuple_1) )/(2*step_vector)
+    k2 = np.reshape(k2,(10,1))
+    dx[:,5] = k2[:8,0]
     
-    return dx
+    dxt = np.insert(dx, 2, dx[7, :]-dx[2, :], axis=0) 
     
-# V, beta, alpha, p, q, r, phi, theta
+    return dxt[0:8,:]
+    
+# V, beta, gamma, alpha, p, q, r, phi, theta
